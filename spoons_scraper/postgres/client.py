@@ -34,6 +34,8 @@ class PostgresClient:
         ]
         
         cursor.executemany(self.get_query('save_locations'), insert_input)
+        
+        self._connection.commit()
         cursor.close()
         
     def get_all_locations(self) -> List[SpoonsLocation]:

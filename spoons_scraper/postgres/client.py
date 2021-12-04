@@ -24,13 +24,23 @@ class PostgresClient:
         
     def get_all_locations(self) -> List[SpoonsLocation]:
         cursor = self._connection.cursor()
-        cursor.execute(self.get_query('get_locations'))
-        results = cursor.fetchall()
         
-        for 
+        cursor.execute(self.get_query('get_locations'))
+        
+        locations = [
+            SpoonsLocation(
+                pub_name=pub_name,
+                street_address=street_address,
+                locality=locality,
+                region=region,
+                post_code=post_code
+            )
+            for pub_name, street_address, locality, region, post_code
+            in cursor.fetchall()
+        ]
         
         cursor.close()
-        return results
+        return locations
 
     @staticmethod
     def get_query(query_name: str) -> str:

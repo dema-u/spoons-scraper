@@ -9,7 +9,7 @@ from spoons_scraper.types import SpoonsLocation
 from spoons_scraper.website import get_locations_generator
 
 
-def bootstap_logger(log_debug):
+def bootstrap_logger(log_debug):
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         level=logging.DEBUG if log_debug else logging.INFO,
@@ -22,7 +22,7 @@ def bootstap_logger(log_debug):
 def main(log_debug):
 
     settings = Settings()
-    logger = bootstap_logger(log_debug)
+    logger = bootstrap_logger(log_debug)
 
     pg_client = PostgresClient.bootstrap_from_settings()
     existing_locations: List[SpoonsLocation] = pg_client.get_all_locations()

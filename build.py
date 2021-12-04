@@ -17,7 +17,7 @@ def check_flyway():
             "flyway"
         ]
     )
-    assert process.returncode == 0, "Please install flyway"
+    assert process.returncode == 0, "Flyway is not installed"
 
 
 @pynt.task(check_flyway)

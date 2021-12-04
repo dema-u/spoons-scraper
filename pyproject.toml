@@ -9,6 +9,7 @@ python = "^3.8"
 pydantic = "^1.8.2"
 pynt = "^0.8.2"
 psycopg2-binary = "^2.9.2"
+click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
 

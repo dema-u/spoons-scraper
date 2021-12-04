@@ -1,6 +1,5 @@
 CREATE TABLE locations (
-    spoons_id int PRIMARY KEY,
-    pub_name varchar(255),
+    pub_name varchar(255) PRIMARY KEY,
     street_address varchar(255),
     locality varchar(255),
     region varchar(255),

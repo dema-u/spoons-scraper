@@ -14,10 +14,13 @@ bs4 = "^0.0.1"
 lxml = "^4.6.4"
 backoff = "^1.11.1"
 requests = "2.25.1"
-selenium = "^4.1.0"
 
 [tool.poetry.dev-dependencies]
+pre-commit = "^2.16.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+spoons_scraper = "spoons_scraper.main:main"

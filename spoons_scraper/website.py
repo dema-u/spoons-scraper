@@ -1,17 +1,17 @@
-from typing import Generator, Set, Callable, Tuple
-from pydantic import HttpUrl, ValidationError
 import logging
-from urllib.parse import urljoin
-import backoff
-import re
 import os
-from bs4 import BeautifulSoup
+import re
+from typing import Callable, Generator, Set, Tuple
+from urllib.parse import urljoin
+
+import backoff
 import requests
+from bs4 import BeautifulSoup
+from pydantic import HttpUrl, ValidationError
 
 from spoons_scraper import BS4_PARSER, DEFO_NOT_A_SCRAPER_HEADERS
-from spoons_scraper.types import SpoonsLocation
 from spoons_scraper.exceptions import WebsiteParseError
-
+from spoons_scraper.types import SpoonsLocation
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,7 @@ def get_locations_generator(
 def _get_soup(base_url: HttpUrl, path: str) -> BeautifulSoup:
     response = requests.get(urljoin(base_url, path), headers=DEFO_NOT_A_SCRAPER_HEADERS)
     response.raise_for_status()
-    return BeautifulSoup(response.content)
+    return BeautifulSoup(response.content, BS4_PARSER)
 
 
 @parse_error_handler

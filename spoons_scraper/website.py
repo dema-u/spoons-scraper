@@ -36,9 +36,7 @@ def get_locations_generator(
     base_url: HttpUrl, locations_path: str
 ) -> Generator[SpoonsLocation, None, None]:
 
-    http_session = requests.Session()
-
-    soup = _get_soup(base_url, locations_path, http_session)
+    soup = _get_soup(base_url, locations_path)
 
     try:
         location_paths = _get_locations_paths(soup)
@@ -56,7 +54,7 @@ def get_locations_generator(
             logger.warning(f"Path {location_path} does not have a pub name")
             continue
 
-        soup = _get_soup(base_url, location_path, http_session)
+        soup = _get_soup(base_url, location_path)
 
         try:
             street_address, locality, region, post_code = _get_location_details(soup)
@@ -72,10 +70,6 @@ def get_locations_generator(
             logger.warning(f"Could not parse data @ {location_path}", exc_info=True)
         except ValidationError:
             logger.warning(f"Could not validate data @ {location_path}", exc_info=True)
-        finally:
-            continue
-
-    http_session.close()
 
 
 @backoff.on_exception(
@@ -88,12 +82,8 @@ def get_locations_generator(
     ),
     max_time=120,  # spoons rate limits so we need to wait out the 403s
 )
-def _get_soup(
-    base_url: HttpUrl, path: str, http_session: requests.Session
-) -> BeautifulSoup:
-    response = http_session.get(
-        urljoin(base_url, path), headers=DEFO_NOT_A_SCRAPER_HEADERS
-    )
+def _get_soup(base_url: HttpUrl, path: str) -> BeautifulSoup:
+    response = requests.get(urljoin(base_url, path), headers=DEFO_NOT_A_SCRAPER_HEADERS)
     response.raise_for_status()
     return BeautifulSoup(response.content)
 

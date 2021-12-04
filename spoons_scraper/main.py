@@ -9,7 +9,7 @@ from spoons_scraper.types import SpoonsLocation
 from spoons_scraper.website import get_locations_generator
 
 
-def bootstrap_logger(log_debug):
+def bootstrap_logger(log_debug: bool) -> logging.Logger:
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         level=logging.DEBUG if log_debug else logging.INFO,
@@ -19,7 +19,7 @@ def bootstrap_logger(log_debug):
 
 @click.command()
 @click.option("--log-debug", default=False, is_flag=True)
-def main(log_debug):
+def main(log_debug: bool):
 
     settings = Settings()
     logger = bootstrap_logger(log_debug)

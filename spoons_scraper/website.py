@@ -107,8 +107,6 @@ def _get_locations_paths(soup: BeautifulSoup) -> Set[Tuple[str, str]]:
 
 
 def _process_string(string: str) -> str:
-    processed_string = (
-        string.strip(" ").strip("\n").strip(":").strip("\r").strip(" ")
-    )  # this needs to be done twice
+    processed_string = string.strip(" ").strip("\n").strip(":").strip("\r").strip(" ")
 
     return processed_string

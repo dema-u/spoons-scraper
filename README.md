@@ -8,7 +8,10 @@ Downloads all wetherspoon pubs locations to a postgres database.
 - [Docker](https://www.docker.com/)
 - [Poetry](https://python-poetry.org/)
 
-To spin up the postgres database required to run the scraper, run the docker-compose file:
+
+## Usage
+
+To spin up a local postgres database required to run the scraper, run the docker-compose file:
 
 ```
 docker-compose up
@@ -29,4 +32,8 @@ After this is done, you can populate your database by running:
 poetry run spoons_scraper
 ```
 
-If you can't be bothered to do any of this, the ```spoons.csv``` file contains all the data.
+If for whatever reason you actually want this in a remote database, you can add a ```.env``` file in the root of the project specifying the connection details. The env variables have to match the names in ```settings.py```, more information in [pydantic documentation](https://pydantic-docs.helpmanual.io/usage/settings/#dotenv-env-support).
+
+---
+
+If you can't be bothered to do any of this, the ```spoons.csv``` file contains some sample data.

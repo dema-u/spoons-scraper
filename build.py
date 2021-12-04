@@ -6,7 +6,7 @@ from spoons_scraper import MIGRATIONS_PATH
 from spoons_scraper.settings import Settings
 
 
-PROJECT_ROOT_PATH = Path(__file__, '..'). resolve()
+PROJECT_ROOT_PATH = Path(__file__, '..').resolve()
 
 
 @pynt.task()

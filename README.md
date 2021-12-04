@@ -8,7 +8,7 @@ Downloads all wetherspoon pubs locations to a postgres database.
 - [Docker](https://www.docker.com/)
 - [Poetry](https://python-poetry.org/)
 
-To spin up the postgres database required to run the scraper, run the docker-compose:
+To spin up the postgres database required to run the scraper, run the docker-compose file:
 
 ```
 docker-compose up

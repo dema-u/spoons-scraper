@@ -20,7 +20,21 @@ class PostgresClient:
         )
 
     def save_locations(self, locations: List[SpoonsLocation]):
-        pass
+        cursor = self._connection.cursor()
+        
+        insert_input = [
+            (
+                location.pub_name,
+                location.street_address,
+                location.locality,
+                location.region,
+                location.post_code
+            )
+            for location in locations
+        ]
+        
+        cursor.executemany(self.get_query('save_locations'), insert_input)
+        cursor.close()
         
     def get_all_locations(self) -> List[SpoonsLocation]:
         cursor = self._connection.cursor()
@@ -57,5 +71,3 @@ class PostgresClient:
             password=settings.DB_PASS,
             db_name=settings.DB_NAME
         )   
-        
-        

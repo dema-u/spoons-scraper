@@ -86,7 +86,7 @@ def get_locations_generator(
         requests.exceptions.HTTPError,
         requests.exceptions.Timeout,
     ),
-    max_time=60,
+    max_time=120,  # spoons rate limits so we need to wait out the 403s
 )
 def _get_soup(
     base_url: HttpUrl, path: str, http_session: requests.Session

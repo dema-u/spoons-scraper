@@ -1,11 +1,12 @@
-import click
 import logging
 from typing import List
 
+import click
+
 from spoons_scraper.postgres.client import PostgresClient
 from spoons_scraper.settings import Settings
-from spoons_scraper.website import get_locations_generator
 from spoons_scraper.types import SpoonsLocation
+from spoons_scraper.website import get_locations_generator
 
 
 def bootstap_logger(log_debug):

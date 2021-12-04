@@ -4,6 +4,7 @@ import logging
 from urllib.parse import urljoin
 import backoff
 import re
+import os
 from bs4 import BeautifulSoup
 import requests
 
@@ -88,13 +89,13 @@ def get_locations_generator(base_url: HttpUrl, locations_path: str) -> Generator
 def _get_soup(base_url: HttpUrl, path: str, http_session: requests.Session) -> BeautifulSoup:
     response = http_session.get(urljoin(base_url, path), headers=DEFO_NOT_A_SCRAPER_HEADERS)
     response.raise_for_status()
-    return BeautifulSoup(response.content, BS4_PARSER)
+    return BeautifulSoup(response.content)
 
 
 @parse_error_handler
 def _get_location_details(soup: BeautifulSoup) -> Tuple[str, str, str, str]:
     street_address = _process_string(
-        soup.find('span', itemprop='streetAddaress').text.split('\n')[1]
+        soup.find('span', itemprop='streetAddress').text.split('\n')[1]
     )
     locality = _process_string(
         soup.find('span', itemprop='addressLocality').string

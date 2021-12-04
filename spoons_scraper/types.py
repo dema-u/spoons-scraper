@@ -7,3 +7,6 @@ class SpoonsLocation(BaseModel):
     locality: str
     region: str
     post_code: str
+    
+    class Config:
+        allow_mutation = False

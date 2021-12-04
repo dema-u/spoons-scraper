@@ -5,10 +5,9 @@ from urllib.parse import urljoin
 import backoff
 import re
 from bs4 import BeautifulSoup
-from pydantic.fields import T
 import requests
 
-from spoons_scraper import BS4_PARSER
+from spoons_scraper import BS4_PARSER, DEFO_NOT_A_SCRAPER_HEADERS
 from spoons_scraper.types import SpoonsLocation
 from spoons_scraper.exceptions import WebsiteParseError
 
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def parse_error_handler(func: Callable) -> Callable:
     
-    if func.__name__.beginswith('_get'):
+    if func.__name__.startswith('_get'):
         element = func.__name__[len('_get')+1:]
     else:
         element = func.__name__
@@ -34,9 +33,11 @@ def parse_error_handler(func: Callable) -> Callable:
     return wrapper
 
 
-def get_spoons_locations(base_url: HttpUrl, locations_path: str) -> Generator[SpoonsLocation, None, None]:
+def get_locations_generator(base_url: HttpUrl, locations_path: str) -> Generator[SpoonsLocation, None, None]:
 
-    soup = _get_soup(base_url, locations_path)
+    http_session = requests.Session()
+    
+    soup = _get_soup(base_url, locations_path, http_session)
     
     try:
         location_paths = _get_locations_paths(soup)
@@ -46,14 +47,17 @@ def get_spoons_locations(base_url: HttpUrl, locations_path: str) -> Generator[Sp
     
     for pub_name, location_path in location_paths:
         
+        logger.debug(f'Processing path {location_path}')
+        
         if pub_name is None:
             logger.warning(f'Path {location_path} does not have a pub name')
             continue
         
-        soup = _get_soup(base_url, location_path)
+        soup = _get_soup(base_url, location_path, http_session)
         
         try:
             street_address, locality, region, post_code = _get_location_details(soup)
+            logger.info(f'Parsed data @ {location_path}')
             yield SpoonsLocation(
                 pub_name=pub_name,
                 street_address=street_address,
@@ -67,6 +71,8 @@ def get_spoons_locations(base_url: HttpUrl, locations_path: str) -> Generator[Sp
             logger.warning(f'Could not validate data @ {location_path}', exc_info=True)
         finally:
             continue
+        
+    http_session.close()
 
 
 @backoff.on_exception(
@@ -77,20 +83,28 @@ def get_spoons_locations(base_url: HttpUrl, locations_path: str) -> Generator[Sp
         requests.exceptions.HTTPError,
         requests.exceptions.Timeout
     ),
-    max_time=30
+    max_time=60
 )
-def _get_soup(base_url: HttpUrl, path: str):
-    response = requests.get(urljoin(base_url, path))
+def _get_soup(base_url: HttpUrl, path: str, http_session: requests.Session) -> BeautifulSoup:
+    response = http_session.get(urljoin(base_url, path), headers=DEFO_NOT_A_SCRAPER_HEADERS)
     response.raise_for_status()
     return BeautifulSoup(response.content, BS4_PARSER)
 
 
 @parse_error_handler
 def _get_location_details(soup: BeautifulSoup) -> Tuple[str, str, str, str]:
-    street_address = _process_string(soup.find('span', itemprop='streetAddress').string)
-    locality = _process_string(soup.find('span', itemprop='addressLocality').string)
-    region = _process_string(soup.find('span', itemprop='addressRegion').string)
-    post_code = _process_string(soup.find('span', itemprop='postalCode').string)
+    street_address = _process_string(
+        soup.find('span', itemprop='streetAddaress').text.split('\n')[1]
+    )
+    locality = _process_string(
+        soup.find('span', itemprop='addressLocality').string
+    )
+    region = _process_string(
+        soup.find('span', itemprop='addressRegion').string
+    )
+    post_code = _process_string(
+        soup.find('span', itemprop='postalCode').string
+    )
     return street_address, locality, region, post_code
 
 
@@ -101,6 +115,12 @@ def _get_locations_paths(soup: BeautifulSoup) -> Set[Tuple[str, str]]:
         in soup.find_all('a', href=re.compile(r'^\/pubs\/all-pubs\/'))
     )
 
+
 def _process_string(string: str) -> str:
-    processed_string = string.strip(' ').strip('\n').strip(':')
+    processed_string = string \
+        .strip(' ') \
+        .strip('\n') \
+        .strip(':') \
+        .strip('\r')
+        
     return processed_string

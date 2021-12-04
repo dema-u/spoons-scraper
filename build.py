@@ -36,3 +36,8 @@ def migrate_database():
         ]
     )
     assert process.returncode == 0, "Failed database migration"
+    
+
+@pynt.task()
+def install_git_hooks():
+    pass

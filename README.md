@@ -28,3 +28,5 @@ After this is done, you can populate your database by running:
 ```
 poetry run spoons_scraper
 ```
+
+If you can't be bothered to do any of this, the ```spoons.csv``` file contains all the data.

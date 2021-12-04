@@ -11,7 +11,7 @@ from spoons_scraper.postgres.queries import QUERIES_PATH
 class PostgresClient:
     
     def __init__(self, host: str, port: str, user: str, password: SecretStr, db_name: str):
-        self._client = psycopg2.connect(
+        self._connection = psycopg2.connect(
             host=host,
             port=port,
             user=user,
@@ -23,7 +23,14 @@ class PostgresClient:
         pass
         
     def get_all_locations(self) -> List[SpoonsLocation]:
-        pass
+        cursor = self._connection.cursor()
+        cursor.execute(self.get_query('get_locations'))
+        results = cursor.fetchall()
+        
+        for 
+        
+        cursor.close()
+        return results
 
     @staticmethod
     def get_query(query_name: str) -> str:
